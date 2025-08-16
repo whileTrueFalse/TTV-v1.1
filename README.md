@@ -13,7 +13,7 @@ A modern, AI-powered web application that generates stunning videos from text de
 
 ## 🚀 Live Demo
 
-[Deploy your own instance](#deployment) or visit the live demo 
+[Deploy your own instance](#deployment) or visit the live demo : https://ttv-v1-1.onrender.com
 
 ## 🛠️ Tech Stack
 

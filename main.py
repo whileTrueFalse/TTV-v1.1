@@ -43,10 +43,6 @@ if REPLICATE_API_KEY:
     os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_KEY
     os.environ["REPLICATE_API_KEY"] = REPLICATE_API_KEY
     
-    # Also set it directly in the replicate client
-    import replicate
-    replicate.Client(api_token=REPLICATE_API_KEY)
-    
     print(f"Replicate API Key loaded: {REPLICATE_API_KEY[:10]}...{REPLICATE_API_KEY[-4:]}")
     print("✅ API token configured for Replicate library")
 else:
@@ -98,17 +94,17 @@ async def generate_video(prompt: str = Form(...)):
         
         def run_replicate():
             try:
-                # Ensure we have the API token for this call
-                if REPLICATE_API_KEY:
-                    # Create a new client with explicit API token
-                    client = replicate.Client(api_token=REPLICATE_API_KEY)
-                    output = client.run(model, input=input_data)
-                else:
-                    # Fallback to default method
-                    output = replicate.run(model, input=input_data)
+                # Force set the environment variable right before the call
+                os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_KEY
+                
+                # Create a new client with explicit API token
+                import replicate
+                client = replicate.Client(api_token=REPLICATE_API_KEY)
+                output = client.run(model, input=input_data)
                 return output
             except Exception as e:
                 print(f"Replicate API error: {e}")
+                print(f"Current REPLICATE_API_TOKEN: {os.environ.get('REPLICATE_API_TOKEN', 'NOT SET')}")
                 raise e
         
         # Run the replicate call in a thread pool to avoid blocking

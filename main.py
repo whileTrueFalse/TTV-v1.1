@@ -97,14 +97,28 @@ async def generate_video(prompt: str = Form(...)):
                 # Force set the environment variable right before the call
                 os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_KEY
                 
-                # Create a new client with explicit API token
+                # Try multiple authentication methods
                 import replicate
-                client = replicate.Client(api_token=REPLICATE_API_KEY)
-                output = client.run(model, input=input_data)
-                return output
+                
+                # Method 1: Direct client with API token
+                try:
+                    client = replicate.Client(api_token=REPLICATE_API_KEY)
+                    output = client.run(model, input=input_data)
+                    print("✅ Authentication successful with explicit client")
+                    return output
+                except Exception as client_error:
+                    print(f"Client method failed: {client_error}")
+                    
+                    # Method 2: Set environment and use global replicate
+                    os.environ["REPLICATE_API_TOKEN"] = REPLICATE_API_KEY
+                    output = replicate.run(model, input=input_data)
+                    print("✅ Authentication successful with environment variable")
+                    return output
+                    
             except Exception as e:
                 print(f"Replicate API error: {e}")
                 print(f"Current REPLICATE_API_TOKEN: {os.environ.get('REPLICATE_API_TOKEN', 'NOT SET')}")
+                print(f"Current REPLICATE_API_KEY: {os.environ.get('REPLICATE_API_KEY', 'NOT SET')}")
                 raise e
         
         # Run the replicate call in a thread pool to avoid blocking

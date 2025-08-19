@@ -233,7 +233,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/ai-video-generator/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-video-generator/discussions)
-- **Email**: your-email@example.com
+- **Email**: samarthganorar@gmail.com
 
 ## 🔮 Future Enhancements
 

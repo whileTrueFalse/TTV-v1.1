@@ -1,3 +1,5 @@
+// Kid-Friendly Magic Video Creator JavaScript
+
 // DOM elements
 const promptInput = document.getElementById('prompt-input');
 const generateBtn = document.getElementById('generate-btn');
@@ -14,10 +16,16 @@ const shareBtn = document.getElementById('share-btn');
 const newVideoBtn = document.getElementById('new-video-btn');
 const retryBtn = document.getElementById('retry-btn');
 const errorMessage = document.getElementById('error-message');
+const charCount = document.getElementById('charCount');
+const tipsToggle = document.getElementById('tipsToggle');
+const tipsContent = document.getElementById('tipsContent');
+const ideaBtns = document.querySelectorAll('.idea-btn');
 
 // State management
 let currentVideoUrl = '';
 let isGenerating = false;
+let currentTipIndex = 0;
+let tipsInterval;
 
 // Event listeners
 generateBtn.addEventListener('click', handleGenerateVideo);
@@ -25,23 +33,41 @@ downloadBtn.addEventListener('click', handleDownload);
 shareBtn.addEventListener('click', handleShare);
 newVideoBtn.addEventListener('click', resetToInput);
 retryBtn.addEventListener('click', resetToInput);
+tipsToggle.addEventListener('click', toggleTips);
+ideaBtns.forEach(btn => btn.addEventListener('click', handleIdeaClick));
+
+// Character count and validation
+promptInput.addEventListener('input', updateCharacterCount);
+promptInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+        handleGenerateVideo();
+    }
+});
 
 // Handle video generation
 async function handleGenerateVideo() {
     const prompt = promptInput.value.trim();
     
     if (!prompt) {
-        showError('Please enter a description for your video.');
+        showError('Please tell me what you want to see in your video! 🎨');
+        return;
+    }
+    
+    if (prompt.length < 10) {
+        showError('Try describing more details! The more you tell me, the better your video will be! ✨');
         return;
     }
     
     if (isGenerating) return;
     
     isGenerating = true;
-    showStatus('Preparing your video generation...');
+    showStatus('Creating your magical video...');
+    
+    // Add fun animations
+    generateBtn.classList.add('bounce-animation');
     
     try {
-        // Simulate progress updates
+        // Simulate progress updates with kid-friendly messages
         simulateProgress();
         
         // Make API call to generate video
@@ -63,17 +89,55 @@ async function handleGenerateVideo() {
         if (result.success) {
             currentVideoUrl = result.video_url;
             showResult(result.video_url);
+            showToast('🎉 Your amazing video is ready!');
         } else {
             throw new Error(result.message || 'Video generation failed');
         }
         
     } catch (error) {
         console.error('Error generating video:', error);
-        showError(error.message || 'An unexpected error occurred. Please try again.');
+        showError('Oops! Something went wrong. Don\'t worry, let\'s try again! 😊');
     } finally {
         isGenerating = false;
         hideStatus();
+        generateBtn.classList.remove('bounce-animation');
     }
+}
+
+// Update character count
+function updateCharacterCount() {
+    const count = promptInput.value.length;
+    charCount.textContent = count;
+    
+    if (count > 180) {
+        charCount.style.color = '#FF6B9D';
+    } else if (count > 150) {
+        charCount.style.color = '#FF8A65';
+    } else {
+        charCount.style.color = '#4ECDC4';
+    }
+}
+
+// Handle quick idea buttons
+function handleIdeaClick(e) {
+    const prompt = e.target.getAttribute('data-prompt');
+    promptInput.value = prompt;
+    updateCharacterCount();
+    
+    // Add fun animation
+    e.target.classList.add('wiggle-animation');
+    setTimeout(() => {
+        e.target.classList.remove('wiggle-animation');
+    }, 500);
+    
+    // Focus on generate button
+    generateBtn.focus();
+}
+
+// Toggle tips section
+function toggleTips() {
+    tipsContent.classList.toggle('open');
+    tipsToggle.textContent = tipsContent.classList.contains('open') ? '💡' : '💡';
 }
 
 // Show status section with loading
@@ -83,12 +147,24 @@ function showStatus(message) {
     resultSection.style.display = 'none';
     errorSection.style.display = 'none';
     generateBtn.disabled = true;
+    
+    // Update button text
+    const btnText = generateBtn.querySelector('.btn-text');
+    const btnLoading = generateBtn.querySelector('.btn-loading');
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'flex';
 }
 
 // Hide status section
 function hideStatus() {
     statusSection.style.display = 'none';
     generateBtn.disabled = false;
+    
+    // Reset button text
+    const btnText = generateBtn.querySelector('.btn-text');
+    const btnLoading = generateBtn.querySelector('.btn-loading');
+    btnText.style.display = 'block';
+    btnLoading.style.display = 'none';
 }
 
 // Show result section with generated video
@@ -97,6 +173,9 @@ function showResult(videoUrl) {
     generatedVideo.load();
     resultSection.style.display = 'block';
     errorSection.style.display = 'none';
+    
+    // Add celebration animation
+    resultSection.classList.add('bounce-animation');
     
     // Scroll to result
     resultSection.scrollIntoView({ behavior: 'smooth' });
@@ -108,6 +187,9 @@ function showError(message) {
     errorSection.style.display = 'block';
     resultSection.style.display = 'none';
     hideStatus();
+    
+    // Add wiggle animation
+    errorSection.classList.add('wiggle-animation');
     
     // Scroll to error
     errorSection.scrollIntoView({ behavior: 'smooth' });
@@ -121,21 +203,44 @@ function resetToInput() {
     generateBtn.disabled = false;
     promptInput.focus();
     
+    // Clear animations
+    resultSection.classList.remove('bounce-animation');
+    errorSection.classList.remove('wiggle-animation');
+    
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Simulate progress bar animation
+// Simulate progress bar animation with kid-friendly messages
 function simulateProgress() {
+    const messages = [
+        'Thinking of amazing ideas...',
+        'Drawing your characters...',
+        'Adding magical colors...',
+        'Making everything move...',
+        'Adding sparkles and magic...',
+        'Almost ready...',
+        'Your video is almost done!'
+    ];
+    
     let progress = 0;
+    let messageIndex = 0;
+    
     const interval = setInterval(() => {
-        progress += Math.random() * 15;
+        progress += Math.random() * 12 + 3;
         if (progress >= 100) {
             progress = 100;
             clearInterval(interval);
         }
+        
         progressFill.style.width = `${progress}%`;
-    }, 500);
+        
+        // Update message every 15% progress
+        if (progress > messageIndex * 15 && messageIndex < messages.length - 1) {
+            messageIndex++;
+            statusMessage.textContent = messages[messageIndex];
+        }
+    }, 800);
 }
 
 // Handle video download
@@ -144,10 +249,12 @@ function handleDownload() {
     
     const link = document.createElement('a');
     link.href = currentVideoUrl;
-    link.download = `ai-generated-video-${Date.now()}.mp4`;
+    link.download = `my-magical-video-${Date.now()}.mp4`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    showToast('📥 Your video is being saved!');
 }
 
 // Handle video sharing
@@ -155,32 +262,33 @@ async function handleShare() {
     if (!currentVideoUrl) return;
     
     const shareData = {
-        title: 'AI Generated Video',
-        text: 'Check out this amazing AI-generated video!',
+        title: 'My Amazing AI Video!',
+        text: 'Look at this cool video I made with AI! 🎬✨',
         url: window.location.origin + currentVideoUrl
     };
     
     try {
         if (navigator.share) {
             await navigator.share(shareData);
+            showToast('🔗 Sharing your awesome video!');
         } else {
             // Fallback: copy URL to clipboard
             await navigator.clipboard.writeText(shareData.url);
-            showToast('Video URL copied to clipboard!');
+            showToast('🔗 Video link copied! Share it with your friends!');
         }
     } catch (error) {
         console.error('Error sharing:', error);
         // Fallback: copy URL to clipboard
         try {
             await navigator.clipboard.writeText(shareData.url);
-            showToast('Video URL copied to clipboard!');
+            showToast('🔗 Video link copied! Share it with your friends!');
         } catch (clipboardError) {
-            showToast('Failed to copy URL. Please copy manually.');
+            showToast('😅 Couldn\'t copy the link. Try again!');
         }
     }
 }
 
-// Show toast notification
+// Show toast notification with kid-friendly styling
 function showToast(message) {
     // Create toast element
     const toast = document.createElement('div');
@@ -189,15 +297,18 @@ function showToast(message) {
     toast.style.cssText = `
         position: fixed;
         top: 20px;
-        right: 20px;
-        background: #333;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: linear-gradient(135deg, #FF6B9D, #4ECDC4);
         color: white;
-        padding: 12px 20px;
+        padding: 15px 25px;
         border-radius: 25px;
-        font-size: 14px;
+        font-family: 'Comic Neue', cursive;
+        font-size: 16px;
+        font-weight: 600;
         z-index: 1000;
         opacity: 0;
-        transform: translateX(100%);
+        box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
         transition: all 0.3s ease;
     `;
     
@@ -206,60 +317,51 @@ function showToast(message) {
     // Animate in
     setTimeout(() => {
         toast.style.opacity = '1';
-        toast.style.transform = 'translateX(0)';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
     }, 100);
     
-    // Remove after 3 seconds
+    // Remove after 4 seconds
     setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
+        toast.style.transform = 'translateX(-50%) translateY(-100px)';
         setTimeout(() => {
-            document.body.removeChild(toast);
+            if (document.body.contains(toast)) {
+                document.body.removeChild(toast);
+            }
         }, 300);
-    }, 3000);
+    }, 4000);
 }
 
-// Add some interactive features
-promptInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.ctrlKey) {
-        handleGenerateVideo();
-    }
-});
-
-// Add character count
-promptInput.addEventListener('input', () => {
-    const maxLength = 500;
-    const currentLength = promptInput.value.length;
+// Rotate tips automatically
+function startTipsRotation() {
+    const tips = document.querySelectorAll('.tip');
     
-    if (currentLength > maxLength) {
-        promptInput.value = promptInput.value.substring(0, maxLength);
+    tipsInterval = setInterval(() => {
+        tips[currentTipIndex].classList.remove('active');
+        currentTipIndex = (currentTipIndex + 1) % tips.length;
+        tips[currentTipIndex].classList.add('active');
+    }, 5000);
+}
+
+// Stop tips rotation
+function stopTipsRotation() {
+    if (tipsInterval) {
+        clearInterval(tipsInterval);
     }
-});
-
-// Add placeholder rotation for better UX
-const placeholders = [
-    "e.g., A majestic dragon flying over a medieval castle at sunset, cinematic lighting, epic atmosphere...",
-    "e.g., A futuristic cityscape with flying cars and neon lights, cyberpunk aesthetic...",
-    "e.g., A serene forest with gentle sunlight filtering through trees, peaceful nature scene...",
-    "e.g., A space station orbiting Earth, astronauts floating in zero gravity...",
-    "e.g., A magical library with floating books and mystical energy, fantasy setting..."
-];
-
-let placeholderIndex = 0;
-setInterval(() => {
-    promptInput.placeholder = placeholders[placeholderIndex];
-    placeholderIndex = (placeholderIndex + 1) % placeholders.length;
-}, 4000);
+}
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     // Focus on input
     promptInput.focus();
     
+    // Start tips rotation
+    startTipsRotation();
+    
     // Add some visual feedback
     generateBtn.addEventListener('mouseenter', () => {
         if (!isGenerating) {
-            generateBtn.style.transform = 'translateY(-2px) scale(1.02)';
+            generateBtn.style.transform = 'translateY(-5px) scale(1.02)';
         }
     });
     
@@ -268,4 +370,65 @@ document.addEventListener('DOMContentLoaded', () => {
             generateBtn.style.transform = 'translateY(0) scale(1)';
         }
     });
+    
+    // Add click sound effects (optional)
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Add a subtle animation
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+        });
+    });
+    
+    // Add floating emoji animation
+    createFloatingEmojis();
 });
+
+// Create floating emojis for extra fun
+function createFloatingEmojis() {
+    const emojis = ['✨', '🌟', '🎨', '🎬', '🌈', '🦄', '🤖', '🐉', '🐱'];
+    
+    setInterval(() => {
+        if (Math.random() < 0.3) { // 30% chance every interval
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            const floatingEmoji = document.createElement('div');
+            floatingEmoji.textContent = emoji;
+            floatingEmoji.style.cssText = `
+                position: fixed;
+                top: 100%;
+                left: ${Math.random() * 100}%;
+                font-size: 24px;
+                pointer-events: none;
+                z-index: 100;
+                animation: floatUp 3s ease-out forwards;
+            `;
+            
+            document.body.appendChild(floatingEmoji);
+            
+            setTimeout(() => {
+                if (document.body.contains(floatingEmoji)) {
+                    document.body.removeChild(floatingEmoji);
+                }
+            }, 3000);
+        }
+    }, 2000);
+}
+
+// Add CSS for floating animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes floatUp {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);

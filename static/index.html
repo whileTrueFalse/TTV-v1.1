@@ -3,40 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Video Generator</title>
+    <title>🎬 Grasp.ai</title>
     <link rel="stylesheet" href="/static/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400&family=Comic+Neue:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1><i class="fas fa-video"></i> TTV Generator</h1>
-            <p>Transform your ideas into stunning videos with AI</p>
+        <!-- Floating Tips Section -->
+        <div class="tips-section">
+            <div class="tips-header">
+                <h3>🌟 Fun Tips!</h3>
+                <button id="tipsToggle" class="tips-toggle">💡</button>
+            </div>
+            <div class="tips-content" id="tipsContent">
+                <div class="tip active" id="tip1">
+                    <span class="tip-icon">🎨</span>
+                    <p>Try describing colorful things like "rainbow unicorn" or "magical castle"!</p>
+                </div>
+                <div class="tip" id="tip2">
+                    <span class="tip-icon">🚀</span>
+                    <p>Use action words like "flying", "dancing", or "jumping" to make exciting videos!</p>
+                </div>
+                <div class="tip" id="tip3">
+                    <span class="tip-icon">🎭</span>
+                    <p>Add characters like "cute robot", "friendly dragon", or "happy cat"!</p>
+                </div>
+                <div class="tip" id="tip4">
+                    <span class="tip-icon">🌈</span>
+                    <p>Describe places like "underwater world", "space adventure", or "fairy forest"!</p>
+                </div>
+            </div>
+        </div>
+
+        <header>
+            <div class="logo">
+                <h1>🎬 Magic Video Creator</h1>
+                <p class="subtitle">✨ Turn your dreams into amazing videos! ✨</p>
+            </div>
         </header>
 
-        <main class="main-content">
+        <main>
             <div class="input-section">
-                <div class="prompt-container">
-                    <label for="prompt-input">Describe your video:</label>
+                <div class="input-group">
+                    <label for="prompt-input">🎨 What do you want to see in your video?</label>
                     <textarea 
                         id="prompt-input" 
-                        placeholder="e.g., A majestic dragon flying over a medieval castle at sunset, cinematic lighting, epic atmosphere..."
+                        placeholder="A magical unicorn flying through rainbow clouds with sparkles everywhere! 🌈✨"
                         rows="3"
                     ></textarea>
-                    <button id="generate-btn" class="generate-btn">
-                        <i class="fas fa-magic"></i>
-                        Generate Video
-                    </button>
+                    <div class="character-count">
+                        <span id="charCount">0</span>/200 characters
+                    </div>
                 </div>
+                
+                <div class="quick-ideas">
+                    <h4>💡 Quick Ideas:</h4>
+                    <div class="idea-buttons">
+                        <button class="idea-btn" data-prompt="A cute robot dancing in a colorful room">🤖 Dancing Robot</button>
+                        <button class="idea-btn" data-prompt="A magical unicorn flying through rainbow clouds">🦄 Rainbow Unicorn</button>
+                        <button class="idea-btn" data-prompt="A friendly dragon playing with butterflies">🐉 Friendly Dragon</button>
+                        <button class="idea-btn" data-prompt="A happy cat jumping on a trampoline">🐱 Bouncing Cat</button>
+                    </div>
+                </div>
+
+                <button id="generate-btn" class="generate-btn">
+                    <span class="btn-text">✨ Create My Video!</span>
+                    <span class="btn-loading" style="display: none;">
+                        <span class="spinner"></span>
+                        Creating magic...
+                    </span>
+                </button>
             </div>
 
             <div class="status-section" id="status-section" style="display: none;">
                 <div class="status-content">
                     <div class="loading-spinner" id="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
+                        <div class="magic-spinner">✨</div>
                     </div>
-                    <p id="status-message">Generating your video...</p>
+                    <p id="status-message">Creating your magical video...</p>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
@@ -44,7 +88,7 @@
             </div>
 
             <div class="result-section" id="result-section" style="display: none;">
-                <h3>Generated Video</h3>
+                <h3>🎉 Your Amazing Video is Ready!</h3>
                 <div class="video-container">
                     <video id="generated-video" controls>
                         <source id="video-source" src="" type="video/mp4">
@@ -53,35 +97,32 @@
                 </div>
                 <div class="video-actions">
                     <button id="download-btn" class="action-btn">
-                        <i class="fas fa-download"></i>
-                        Download
+                        📥 Save Video
                     </button>
                     <button id="share-btn" class="action-btn">
-                        <i class="fas fa-share"></i>
-                        Share
+                        🔗 Share with Friends
                     </button>
                     <button id="new-video-btn" class="action-btn primary">
-                        <i class="fas fa-plus"></i>
-                        Generate Another
+                        🎬 Make Another
                     </button>
                 </div>
             </div>
 
             <div class="error-section" id="error-section" style="display: none;">
                 <div class="error-content">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <div class="error-icon">😅</div>
                     <h3>Oops! Something went wrong</h3>
                     <p id="error-message"></p>
                     <button id="retry-btn" class="retry-btn">
-                        <i class="fas fa-redo"></i>
-                        Try Again
+                        🔄 Try Again
                     </button>
                 </div>
             </div>
         </main>
 
         <footer class="footer">
-            <p>Made by Samarth Ganorkar <link rel="stylesheet" href="https://www.linkedin.com/in/samarth-ganorkar-0000000000/"> </p>
+            <p>🌟 Made with magic and lots of love! 🌟</p>
+            <p class="age-note">Perfect for genuis minds.</p>
         </footer>
     </div>
 

@@ -1,4 +1,4 @@
-# AI Video Generator 🎬✨
+# TTV-version 1.1 🎬✨
 
 A modern, AI-powered web application that generates stunning videos from text descriptions using Stability AI's cutting-edge video generation technology.
 
@@ -13,7 +13,7 @@ A modern, AI-powered web application that generates stunning videos from text de
 
 ## 🚀 Live Demo
 
-[Deploy your own instance](#deployment) or visit the live demo 
+[Deploy your own instance](#deployment) or visit the live demo : https://ttv-v1-1.onrender.com
 
 ## 🛠️ Tech Stack
 
@@ -233,7 +233,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/ai-video-generator/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-video-generator/discussions)
-- **Email**: your-email@example.com
+- **Email**: samarthganorar@gmail.com
 
 ## 🔮 Future Enhancements
 
